@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="referrer" content="no-referrer" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'"
+    />
+    <title>glucose.review</title>
+    <link rel="stylesheet" href="assets/vendor/uplot/uPlot.min.css" />
+    <link rel="stylesheet" href="assets/styles.css" />
+    <script type="module" src="assets/app.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap header-row">
+        <a class="wordmark" href="#/">glucose.review</a>
+        <nav class="tabs" aria-label="Views">
+          <a href="#/" data-route="today">Today</a>
+          <a href="#/trends" data-route="trends">Trends</a>
+          <a href="#/archive" data-route="archive">Archive</a>
+        </nav>
+      </div>
+      <div class="wrap status-line" id="status-line" aria-live="polite"></div>
+    </header>
+    <div class="wrap" id="banners"></div>
+    <main class="wrap" id="app" tabindex="-1">
+      <p class="loading">Loading…</p>
+    </main>
+    <footer class="wrap site-footer">
+      <p>Personal data review, not medical advice.</p>
+    </footer>
+    <noscript><p class="wrap">This dashboard needs JavaScript.</p></noscript>
+  </body>
+</html>

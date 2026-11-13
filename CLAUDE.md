@@ -54,8 +54,32 @@ are done.
 
 ## Commands
 
-The site has no build, lint or test tooling. To preview locally:
+There is no build, lint or test tooling. To preview locally:
 
 ```bash
-python -m http.server 8000   # from the repo root, then open http://localhost:8000/
+python -m http.server 8000      # from the repo root
+# http://localhost:8000/                  → real data (once the agent has published)
+# http://localhost:8000/?base=dev/sample/ → synthetic sample data (safe to commit)
+node --check assets/*.js        # quick syntax check
 ```
+
+Regenerate the sample from the agent repo:
+`uv run glucose-review sample --out ../glucose.review/dev/sample --date 2026-11-12`.
+
+## Code map
+
+- `assets/app.js`: boot, `?base=` data root (relative and same-origin only), banners, hash router.
+- `assets/views.js`: Today / Trends / Archive / Report views. Each returns `{node, mount}`, and charts mount after the node is in the DOM.
+- `assets/components.js`: hero, tiles, time-in-range bars, hourly strips, settings panel.
+- `assets/charts.js`: uPlot charts. Colours are read from CSS tokens at render time, and the router re-renders when the colour scheme flips.
+- `assets/format.js`: the `h()` element builder (text only, never HTML), formatting, DST-safe `localMidnight`.
+- `assets/vendor/`: pinned uPlot, marked and DOMPurify. See `VERSIONS.md`, and re-verify integrity when updating.
+
+## Visual rules
+
+- The range colours in `assets/styles.css` were chosen with the dataviz palette validator. Adjacent
+  colour-blind ΔE is ≥ 10 in both light and dark mode. Don't change them without re-running it.
+  Light: `#89312f #c1645b #006516 #d09a21 #d73e00`. Dark: `#c90019 #ce7067 #007617 #c28500 #c53e00`.
+- Every chart has a "Show as table" twin, and tooltips only add detail, never gate it. Text uses the ink
+  tokens, never series colours. Lines are 2px, grids are solid hairlines (the only dashed line is the
+  7.8 threshold), and there's never a dual axis.
