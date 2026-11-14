@@ -6,7 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 `glucose.review` is the **public, static dashboard** (GitHub Pages) for a personal T1D / AAPS / Nightscout
 settings review. A separate private repo, `../glucose.review.agent` (Python), fetches Nightscout data
-every day, computes metrics, has Claude write a review, and commits the results here.
+every day, computes metrics and commits them here with a template review. A Claude Code cloud
+scheduled task then replaces the review text (`llm.ok` turns true; SPEC D34).
 
 **Read `docs/SPEC.md` (the decision log in §2) and `docs/PLAN.md` before making changes.** `docs/` is
 gitignored on purpose: it's local planning material and never published. When the implementation turns
@@ -16,7 +17,7 @@ are done.
 ## Ownership boundary
 
 - This repo owns the **site code**: `index.html`, `assets/`, `robots.txt`, `.nojekyll`, and later `CNAME`.
-- `data/**` and `reports/**` are **written only by the agent**, with one commit per day. Don't edit them
+- `data/**` and `reports/**` are **written only by the agent**, with one data commit and one review commit per day. Don't edit them
   by hand. Change the agent instead, because its next run would overwrite manual edits.
 
 ## Architecture
