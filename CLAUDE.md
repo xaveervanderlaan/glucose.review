@@ -42,6 +42,7 @@ are done.
   red, green, amber, orange. Values always carry a text label, so nothing depends on colour alone.
 - Times use a 24h clock in the `timezone` from `latest.json` (Europe/Amsterdam). Timestamps in the data are epoch seconds (UTC).
 - Findings express direction as `insulin_effect` (`more` / `less`). A *lower* ISF or IC number means *more* insulin, so don't reword this into "raise/lower ISF".
+  The UI may show the AAPS number direction only from the agent's `value_direction` (never derive it), and always next to the insulin effect.
 - Show a stale banner if `generated_at` is more than 36h old. Show an "auto-generated summary" badge when `llm.ok` is false.
 - The footer disclaimer ("Personal data review, not medical advice.") stays on every view.
 
@@ -70,9 +71,11 @@ Regenerate the sample from the agent repo:
 
 - `assets/app.js`: boot, `?base=` data root (relative and same-origin only), banners, hash router.
 - `assets/views.js`: Today / Trends / Archive / Report views. Each returns `{node, mount}`, and charts mount after the node is in the DOM.
-- `assets/components.js`: hero, tiles, time-in-range bars, hourly strips, settings panel.
+- `assets/components.js`: hero, tiles, time-in-range bars, hourly strips, settings panel (next step,
+  findings by setting, profile, changes with before→after).
 - `assets/charts.js`: uPlot charts. Colours are read from CSS tokens at render time, and the router re-renders when the colour scheme flips.
-- `assets/format.js`: the `h()` element builder (text only, never HTML), formatting, DST-safe `localMidnight`.
+- `assets/format.js`: the `h()` element builder (text only, never HTML), formatting, DST-safe `localMidnight`,
+  `weekLabel("2026-W46")` → "Week 46 (9–15 Nov 2026)".
 - `assets/vendor/`: pinned uPlot, marked and DOMPurify. See `VERSIONS.md`, and re-verify integrity when updating.
 
 ## Visual rules

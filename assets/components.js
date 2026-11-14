@@ -1,6 +1,6 @@
 // Non-chart components: hero + tiles, time-in-range bars, hourly strips, settings panel.
 
-import { RANGES, fmt, h, shortDate, tableView } from "./format.js";
+import { RANGES, daysBetween, fmt, h, shortDate, tableView, weekLabel } from "./format.js";
 
 const WINDOW_LABELS = { "1d": "Yesterday", "14d": "14 days", "90d": "90 days" };
 
@@ -159,45 +159,145 @@ function blockTable(title, unit, blocks, value) {
 
 const SETTING_LABEL = { basal: "Basal", isf: "ISF", ic: "IC", target_low: "Target low", target_high: "Target high" };
 const SETTING_UNIT = { basal: "U/h", isf: "mmol/L/U", ic: "g/U", target_low: "mmol/L", target_high: "mmol/L" };
+const FINDING_GROUPS = [
+  ["Basal", ["basal"]],
+  ["ISF", ["isf"]],
+  ["IC (by meal)", ["ic"]],
+  ["Targets & loop", ["target", "loop"]],
+];
+const EFFECT_LABEL = { more: "More insulin", less: "Less insulin", none: "For information" };
+const NUMBER_NAME = { basal: "basal rate", isf: "ISF", ic: "IC", target: "target" };
+const CHANGE_LOOKBACK_DAYS = 28; // the agent compares before/after for changes this recent (SPEC §6.5)
+
+function chip(text, kind) {
+  return h("span", { class: kind ? `chip chip-${kind}` : "chip" }, text);
+}
+
+/** The AAPS number direction, straight from the agent's `value_direction` (never derived here). */
+function aapsWay(f) {
+  if (f.value_direction === "none" || !NUMBER_NAME[f.setting]) return null;
+  return f.value_direction === "increase" ? "higher" : "lower";
+}
+
+function aapsLine(f) {
+  const way = aapsWay(f);
+  return way ? `In AAPS: a ${way} ${NUMBER_NAME[f.setting]} number for this block.` : null;
+}
+
+function findingItem(f, isNext) {
+  const chips = [
+    chip(EFFECT_LABEL[f.insulin_effect] ?? f.insulin_effect, f.insulin_effect === "none" ? null : "effect"),
+    f.insulin_effect === "none" ? null : chip(`~${f.change_pct}%`),
+    chip(`${f.confidence[0].toUpperCase()}${f.confidence.slice(1)} confidence`),
+    f.status === "deferred" ? chip("Deferred: lows first", "deferred") : null,
+    isNext ? chip("Next step", "next") : null,
+  ];
+  const aaps = aapsLine(f);
+  return h(
+    "li",
+    { class: "finding" },
+    h("div", { class: "finding-head" }, h("strong", {}, f.block), h("span", { class: "chips" }, chips)),
+    h("p", {}, f.summary),
+    aaps ? h("p", { class: "aaps" }, aaps) : null,
+  );
+}
+
+function nextStepBox(latest, weeklyLink) {
+  const step = latest.findings.find((f) => f.id === latest.next_step);
+  if (step) {
+    const setting = SETTING_LABEL[step.setting] ?? step.setting;
+    return h(
+      "div",
+      { class: "next-step" },
+      h("p", { class: "label" }, "Suggested next step"),
+      h("p", { class: "what" }, `${setting} ${step.block}: ${EFFECT_LABEL[step.insulin_effect].toLowerCase()}`),
+      h(
+        "p",
+        {},
+        `In AAPS: make the ${NUMBER_NAME[step.setting]} number for this block about ${step.change_pct}% ${aapsWay(step)}. `,
+        "Change one thing at a time, then watch the same block for a week.",
+      ),
+      h("p", { class: "aaps" }, step.summary),
+      weeklyLink,
+    );
+  }
+  const safety = latest.safety;
+  let reason = "no finding has enough evidence yet (medium confidence or better).";
+  if (safety && !safety.coverage_ok) reason = "CGM coverage over the last 14 days was below 70%.";
+  else if (safety?.lows_first)
+    reason = "lows come first. Time below 3.9 is above the limit, so changes that would add insulin wait, and no change that would reduce insulin has enough evidence yet.";
+  else if (!latest.findings.length) reason = "the last 14 days showed no clear signal.";
+  return h(
+    "div",
+    { class: "next-step none" },
+    h("p", { class: "label" }, "Suggested next step"),
+    h("p", {}, `None this week: ${reason}`),
+    weeklyLink,
+  );
+}
+
+function effectTable(before, after) {
+  const rows = [
+    ["In range", (m) => fmt.pct(m.tir, 0)],
+    ["Below 3.9", (m) => fmt.pct(m.below)],
+    ["Mean (mmol/L)", (m) => fmt.mmol(m.mean_mmol)],
+  ];
+  if (before.net_basal_pct != null && after.net_basal_pct != null) rows.push(["Loop vs basal", (m) => `${fmt.signed(m.net_basal_pct, 0)}%`]);
+  return h(
+    "table",
+    { class: "effect" },
+    h(
+      "thead",
+      {},
+      h("tr", {}, h("th", { scope: "col" }, "In this block"), h("th", { scope: "col" }, `Before (${before.days} d)`), h("th", { scope: "col" }, `After (${after.days} d)`)),
+    ),
+    h("tbody", {}, rows.map(([label, value]) => h("tr", {}, h("th", { scope: "row" }, label), h("td", {}, value(before)), h("td", {}, value(after))))),
+  );
+}
+
+function changeItem(c, reportDate) {
+  const age = daysBetween(c.date, reportDate);
+  let effect = null;
+  if (c.before && c.after) effect = effectTable(c.before, c.after);
+  else if (age <= CHANGE_LOOKBACK_DAYS)
+    effect = h("p", { class: "aaps" }, age < 5 ? "Too early to tell: the comparison needs 4 days with data after the change." : "Not enough data around the change to compare.");
+  return h(
+    "li",
+    {},
+    h("span", { class: "when" }, shortDate(c.date)),
+    `${SETTING_LABEL[c.setting] ?? c.setting} ${c.block}: ${c.from} → ${c.to} ${SETTING_UNIT[c.setting] ?? ""}`,
+    effect,
+  );
+}
 
 export function settingsCard(latest) {
   const p = latest.profile;
-  const findings = latest.findings.length
-    ? h(
-        "ul",
-        { class: "changes" },
-        latest.findings.map((f) =>
-          h(
-            "li",
-            {},
-            h("strong", {}, `${SETTING_LABEL[f.setting] ?? f.setting} ${f.block}`),
-            ` · ${f.insulin_effect} insulin, ~${f.change_pct}% · ${f.confidence} confidence${f.status === "deferred" ? " · deferred (lows first)" : ""}`,
-            h("div", { class: "sub" }, f.summary),
-          ),
-        ),
-      )
-    : h("p", { class: "empty" }, "Settings analysis arrives with the weekly review.");
+  const weekly = latest.reports.weekly_latest;
+  const week = weekly ? weekly.split("/").pop().replace(".md", "") : null;
+  const weeklyLink = week ? h("p", { class: "more" }, h("a", { href: `#/report/weekly/${week}` }, `Weekly review, ${weekLabel(week)} →`)) : null;
+  const groups = FINDING_GROUPS.map(([title, settings]) => {
+    const items = latest.findings.filter((f) => settings.includes(f.setting));
+    return h(
+      "div",
+      { class: "finding-group" },
+      h("h4", {}, title),
+      items.length
+        ? h("ul", { class: "findings" }, items.map((f) => findingItem(f, f.id === latest.next_step)))
+        : h("p", { class: "empty" }, "No clear signal in the last 14 days."),
+    );
+  });
   const changes = latest.changes.length
-    ? h(
-        "ul",
-        { class: "changes" },
-        [...latest.changes].reverse().map((c) =>
-          h(
-            "li",
-            {},
-            h("span", { class: "when" }, shortDate(c.date)),
-            `${SETTING_LABEL[c.setting] ?? c.setting} ${c.block}: ${c.from} → ${c.to} ${SETTING_UNIT[c.setting] ?? ""}`,
-          ),
-        ),
-      )
+    ? h("ul", { class: "changes" }, [...latest.changes].reverse().map((c) => changeItem(c, latest.report_date)))
     : h("p", { class: "empty" }, "No setting changes in the last 90 days.");
   return h(
     "section",
     { class: "card" },
     h("h2", {}, "Settings review"),
-    h("p", { class: "sub" }, "Current AAPS profile, recent changes and findings. Advice only, never applied automatically."),
+    h("p", { class: "sub" }, "Findings from the last 14 days, the current AAPS profile and recent changes. Advice only, never applied automatically."),
+    nextStepBox(latest, weeklyLink),
     h("h3", {}, "Findings"),
-    findings,
+    groups,
+    h("h3", {}, "Current profile"),
     h(
       "div",
       { class: "profile-grid" },

@@ -1,3 +1,4 @@
 [
-{"type":"daily","date":"2026-11-12","week":null,"path":"reports/daily/2026/2026-11-12.md","tir":89.6,"llm_ok":false}
+{"type":"daily","date":"2026-11-12","week":null,"path":"reports/daily/2026/2026-11-12.md","tir":80.2,"llm_ok":false},
+{"type":"weekly","date":null,"week":"2026-W45","path":"reports/weekly/2026/2026-W45.md","tir":86.4,"llm_ok":false}
 ]

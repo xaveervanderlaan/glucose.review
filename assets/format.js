@@ -56,6 +56,30 @@ export function shortDate(iso) {
   );
 }
 
+/** Days between two ISO dates (b − a). */
+export function daysBetween(a, b) {
+  const utc = (iso) => {
+    const [y, m, d] = iso.split("-").map(Number);
+    return Date.UTC(y, m - 1, d);
+  };
+  return Math.round((utc(b) - utc(a)) / 86400000);
+}
+
+/** "Week 46 (9–15 Nov 2026)" from an ISO week such as "2026-W46" (Monday to Sunday). */
+export function weekLabel(week) {
+  const [year, number] = week.split("-W").map(Number);
+  const jan4 = Date.UTC(year, 0, 4);
+  const monday = new Date(jan4 - ((new Date(jan4).getUTCDay() + 6) % 7) * 86400000 + (number - 1) * 7 * 86400000);
+  const sunday = new Date(monday.getTime() + 6 * 86400000);
+  const f = (date, opts) => new Intl.DateTimeFormat("en-GB", { ...opts, timeZone: "UTC" }).format(date);
+  const sameYear = monday.getUTCFullYear() === sunday.getUTCFullYear();
+  const span =
+    monday.getUTCMonth() === sunday.getUTCMonth()
+      ? `${monday.getUTCDate()}–${f(sunday, { day: "numeric", month: "short", year: "numeric" })}`
+      : `${f(monday, sameYear ? { day: "numeric", month: "short" } : { day: "numeric", month: "short", year: "numeric" })} – ${f(sunday, { day: "numeric", month: "short", year: "numeric" })}`;
+  return `Week ${number} (${span})`;
+}
+
 function tzOffsetMs(epochMs, tz) {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: tz,

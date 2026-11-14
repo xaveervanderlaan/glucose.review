@@ -5,7 +5,7 @@ import DOMPurify from "./vendor/dompurify/purify.es.mjs";
 import { marked } from "./vendor/marked/marked.esm.js";
 import { agpChart, glucoseChart, insulinChart, seriesColor, trendChart } from "./charts.js";
 import { hourlyStrips, settingsCard, summaryCard, timeInRangesCard } from "./components.js";
-import { clockFormatter, fmt, h, localMidnight, longDate, shortDate, tableView } from "./format.js";
+import { clockFormatter, fmt, h, localMidnight, longDate, shortDate, tableView, weekLabel } from "./format.js";
 
 const DAILY_ID = /^\d{4}-\d{2}-\d{2}$/;
 const WEEKLY_ID = /^\d{4}-W\d{2}$/;
@@ -132,7 +132,7 @@ export function todayView(ctx) {
         review.querySelector(".loading").replaceWith(rendered);
         if (latest.reports.weekly_latest) {
           const week = latest.reports.weekly_latest.split("/").pop().replace(".md", "");
-          review.append(h("p", {}, h("a", { href: `#/report/weekly/${week}` }, `Latest weekly settings review (${week}) →`)));
+          review.append(h("p", {}, h("a", { href: `#/report/weekly/${week}` }, `Weekly settings review, ${weekLabel(week)} →`)));
         }
       })
       .catch(() => review.querySelector(".loading")?.replaceWith(h("p", { class: "empty" }, "The review for this day isn't available.")));
@@ -266,7 +266,7 @@ export function archiveView(ctx, filter, setFilter) {
             h(
               "a",
               { href: e.type === "daily" ? `#/report/daily/${e.date}` : `#/report/weekly/${e.week}` },
-              h("span", {}, e.type === "daily" ? longDate(e.date) : `Weekly review ${e.week}`, e.llm_ok ? null : h("span", { class: "badge" }, "auto")),
+              h("span", {}, e.type === "daily" ? longDate(e.date) : `Weekly review, ${weekLabel(e.week)}`, e.llm_ok ? null : h("span", { class: "badge" }, "auto")),
               h("span", { class: "meta" }, e.tir == null ? "" : `TIR ${fmt.pct(e.tir, 0)}`),
             ),
           ),
