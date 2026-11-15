@@ -133,10 +133,19 @@ a {
 }
 
 .wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   color: var(--ink);
   font-weight: 650;
   text-decoration: none;
   letter-spacing: -0.01em;
+}
+
+/* Pixel-art logo (16x16 drawn at 2x): keep the pixels square at any zoom. */
+.wordmark .logo {
+  flex: none;
+  image-rendering: pixelated;
 }
 
 .tabs {
