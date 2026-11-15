@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>glucose.review</title>
+  <style>
+    .drop { fill: #006516; }
+    .shine { fill: #ffffff; opacity: 0.28; }
+    .lens { fill: #ffffff; stroke: #0b0b0b; stroke-width: 3; }
+    .pupil { fill: #0b0b0b; }
+    .bridge { fill: none; stroke: #0b0b0b; stroke-width: 3; stroke-linecap: round; }
+    .smile { fill: none; stroke: #ffffff; stroke-width: 3.8; stroke-linecap: round; }
+    @media (prefers-color-scheme: dark) {
+      .drop { fill: #1baf7a; }
+    }
+  </style>
+  <!-- A glucose drop, in-range green, wearing reading glasses: glucose, reviewed. -->
+  <path class="drop" d="M32 1C25 12 7 24 7 38a25 25 0 0 0 50 0C57 24 39 12 32 1Z" />
+  <path class="shine" d="M15.5 30.5c1.4-6 5.6-11.4 9.6-15.4 1-1 2.6 0.3 1.8 1.4-2.8 4.1-5.4 9.1-6.6 14.4-0.7 2.9-5.4 2.6-4.8-0.4Z" />
+  <path class="bridge" d="M28.4 37q3.6-2.8 7.2 0" />
+  <circle class="lens" cx="21.4" cy="38" r="7.6" />
+  <circle class="lens" cx="42.6" cy="38" r="7.6" />
+  <circle class="pupil" cx="23" cy="36.8" r="2.8" />
+  <circle class="pupil" cx="44.2" cy="36.8" r="2.8" />
+  <path class="smile" d="M24.5 51.5q7.5 6.5 15 0" />
+</svg>
