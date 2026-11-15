@@ -817,3 +817,68 @@ th {
 #banners:not(:empty) {
   margin-bottom: 4px;
 }
+
+/* -- ASCII buddy (Today view, assets/buddy.js) ---------------------------------------
+   A small animated animal keyed to yesterday's time in range. The art is decorative
+   (aria-hidden) and drawn in ink tokens; the message beside it carries the number as text.
+   Mobile-first: the stage spans the card, from 640px it sits left of the message.
+   The stage clips, so a walking animal can never cause horizontal page scroll. */
+
+.buddy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+.buddy-stage {
+  flex: 0 1 auto;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  background: var(--surface-2);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font: 13px/1.25 ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+.buddy-art {
+  width: max-content;
+  margin: 0 auto;
+  font: inherit;
+  color: var(--ink-2);
+  white-space: pre;
+}
+
+.buddy-stage.walking .buddy-art {
+  margin: 0; /* buddy.js moves it with translateX from the left edge */
+}
+
+.buddy-text {
+  flex: 1 1 15rem;
+  min-width: 0;
+}
+
+.buddy-message {
+  margin: 0;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.buddy-note {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+@media (min-width: 640px) {
+  .buddy-stage {
+    width: 36ch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .buddy-art {
+    transform: none !important;
+  }
+}

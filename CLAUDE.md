@@ -75,8 +75,12 @@ Regenerate the sample from the agent repo:
 - `assets/components.js`: hero, tiles, time-in-range bars, hourly strips, settings panel (next step,
   findings by setting, profile, changes with before→after).
 - `assets/charts.js`: uPlot charts. Colours are read from CSS tokens at render time, and the router re-renders when the colour scheme flips.
+- `assets/buddy.js`: the ASCII buddy card on Today. `buddyFor(time_pct)` is pure (tier, frames, message; testable in Node),
+  `buddyCard()` animates it, honours reduced motion, pauses while the tab is hidden and stops once the node leaves the DOM.
 - `assets/format.js`: the `h()` element builder (text only, never HTML), formatting, DST-safe `localMidnight`,
   `weekLabel("2026-W46")` → "Week 46 (9–15 Nov 2026)".
+- `assets/favicon.svg`: the pixel-art logo (favicon and header), drawn on a 16×16 grid kept as a comment in the file.
+  Re-render `favicon-32.png` (2×) and `apple-touch-icon.png` (10× on the page colour) after changing it.
 - `assets/vendor/`: pinned uPlot, marked and DOMPurify. See `VERSIONS.md`, and re-verify integrity when updating.
 
 ## Visual rules

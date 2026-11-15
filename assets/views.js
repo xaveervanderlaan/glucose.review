@@ -3,6 +3,7 @@
 
 import DOMPurify from "./vendor/dompurify/purify.es.mjs";
 import { marked } from "./vendor/marked/marked.esm.js";
+import { buddyCard } from "./buddy.js";
 import { agpChart, glucoseChart, insulinChart, seriesColor, trendChart } from "./charts.js";
 import { hourlyStrips, settingsCard, summaryCard, timeInRangesCard } from "./components.js";
 import { clockFormatter, fmt, h, localMidnight, longDate, shortDate, tableView, weekLabel } from "./format.js";
@@ -112,9 +113,11 @@ export function todayView(ctx) {
     hourlyStrips(latest.hourly_14d),
   );
 
-  const node = h("div", {}, summaryCard(latest), review, timeInRangesCard(latest), yesterday, agp, settingsCard(latest));
+  const buddy = buddyCard(latest);
+  const node = h("div", {}, summaryCard(latest), buddy.node, review, timeInRangesCard(latest), yesterday, agp, settingsCard(latest));
 
   const mount = () => {
+    buddy.mount();
     const { lanes } = glucoseChart(glucoseEl, latest);
     const glucoseLegend = [
       ["key-line", seriesColor("--ink"), "Glucose"],
