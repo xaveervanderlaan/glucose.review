@@ -92,5 +92,6 @@
 {"date":"2026-11-14","coverage":100.0,"mean":7.5,"sd":1.7,"cv":23.0,"gmi":6.5,"gri":11.2,"very_low":0.0,"low":0.0,"in_range":86.0,"tight":67.8,"high":14.0,"very_high":0.0,"tdd":37.87,"carbs_g":183.0,"smb_u":10.05,"hypos_l1":0,"hypos_l2":0},
 {"date":"2026-11-15","coverage":99.8,"mean":8.0,"sd":1.7,"cv":21.7,"gmi":6.8,"gri":10.7,"very_low":0.0,"low":0.0,"in_range":86.7,"tight":58.5,"high":13.3,"very_high":0.0,"tdd":40.83,"carbs_g":229.0,"smb_u":7.9,"hypos_l1":0,"hypos_l2":0},
 {"date":"2026-11-16","coverage":99.9,"mean":8.7,"sd":1.8,"cv":20.5,"gmi":7.0,"gri":22.5,"very_low":0.0,"low":0.0,"in_range":71.9,"tight":31.5,"high":28.1,"very_high":0.0,"tdd":37.86,"carbs_g":168.0,"smb_u":15.6,"hypos_l1":0,"hypos_l2":0},
-{"date":"2026-11-17","coverage":100.0,"mean":7.1,"sd":1.5,"cv":20.4,"gmi":6.4,"gri":0.8,"very_low":0.0,"low":0.0,"in_range":98.9,"tight":63.8,"high":1.1,"very_high":0.0,"tdd":27.96,"carbs_g":104.0,"smb_u":7.2,"hypos_l1":0,"hypos_l2":0}
+{"date":"2026-11-17","coverage":100.0,"mean":7.1,"sd":1.5,"cv":20.4,"gmi":6.4,"gri":0.8,"very_low":0.0,"low":0.0,"in_range":98.9,"tight":63.8,"high":1.1,"very_high":0.0,"tdd":27.96,"carbs_g":104.0,"smb_u":7.2,"hypos_l1":0,"hypos_l2":0},
+{"date":"2026-11-18","coverage":100.0,"mean":7.1,"sd":1.6,"cv":23.3,"gmi":6.3,"gri":5.0,"very_low":0.0,"low":0.0,"in_range":93.7,"tight":71.3,"high":6.3,"very_high":0.0,"tdd":28.08,"carbs_g":123.0,"smb_u":5.75,"hypos_l1":0,"hypos_l2":0}
 ]
