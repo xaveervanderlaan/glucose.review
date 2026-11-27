@@ -1,5 +1,5 @@
 [
-{"type":"daily","date":"2026-11-25","week":null,"path":"reports/daily/2026/2026-11-25.md","tir":74.4,"llm_ok":false},
+{"type":"daily","date":"2026-11-25","week":null,"path":"reports/daily/2026/2026-11-25.md","tir":74.4,"llm_ok":true},
 {"type":"daily","date":"2026-11-24","week":null,"path":"reports/daily/2026/2026-11-24.md","tir":75.9,"llm_ok":true},
 {"type":"daily","date":"2026-11-23","week":null,"path":"reports/daily/2026/2026-11-23.md","tir":91.9,"llm_ok":true},
 {"type":"weekly","date":null,"week":"2026-W47","path":"reports/weekly/2026/2026-W47.md","tir":84.8,"llm_ok":true},
